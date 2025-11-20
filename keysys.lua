@@ -6,7 +6,7 @@ local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 
 -- CONFIG
-local MainScriptUrl = "https://raw.githubusercontent.com/yourusername/yourrepo/main/yourscript.lua"
+local MainScriptUrl = "https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/flick.lua"
 local CorrectKey = "vulgarkey5"
 local KeyLink = "https://discord.gg/yourserver"
 local launcherTitle = "Vulgar"
