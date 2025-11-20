@@ -201,9 +201,9 @@ function Vulgar:Window(options)
         if not processed and input.KeyCode == Enum.KeyCode.RightShift then
             visible = not visible
             if visible then
+                Main.Visible = true
                 TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.05}):Play()
                 TweenService:Create(Blur, TweenInfo.new(0.3), {Size = 14}):Play()
-                Main.Visible = true
             else
                 TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
                 TweenService:Create(Blur, TweenInfo.new(0.3), {Size = 0}):Play()
@@ -337,10 +337,12 @@ function Vulgar:Window(options)
                 callback = callback or function() end
                 local enabled = false
 
-                local Toggle = CreateInstance("Frame", {
+                local Toggle = CreateInstance("TextButton", {
                     Size = UDim2.new(1, 0, 0, 34),
                     BackgroundColor3 = Vulgar.Theme.Secondary,
                     BackgroundTransparency = 0.7,
+                    AutoButtonColor = false,
+                    Text = "",
                     Parent = SectionContent
                 })
                 CreateInstance("UICorner", {CornerRadius = UDim.new(0, 6), Parent = Toggle})
@@ -436,6 +438,7 @@ function Vulgar:Window(options)
                     Position = UDim2.new(0, -8, 0.5, -8),
                     BackgroundColor3 = Color3.fromRGB(255,255,255),
                     Text = "",
+                    AutoButtonColor = false,
                     Parent = Fill
                 })
                 CreateInstance("UICorner", {CornerRadius = UDim.new(1,0), Parent = Dragger})
