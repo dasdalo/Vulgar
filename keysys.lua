@@ -109,39 +109,41 @@ local function createKeyUI()
             keyBox.Text = "Key Accepted! Loading..."
             keyBox.TextColor3 = Color3.fromRGB(0, 255, 0)
             
-            local ok, content = pcall(HttpService.GetAsync, HttpService, MainScriptUrl)
-            
-            if ok and content then
-                -- Begin Fade Out
-                local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+            -- We don't fetch content here anymore; we just proceed to fade out.
 
-                TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
+            local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
-                for _, v in mainFrame:GetChildren() do
-                    if v:IsA("GuiObject") then
-                        local props = {}
-                        if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
-                            props.TextTransparency = 1
-                        end
-                        if v:IsA("TextButton") or v:IsA("TextBox") or v:IsA("Frame") then
-                            props.BackgroundTransparency = 1
-                        end
-                        TweenService:Create(v, fadeOut, props):Play()
+            TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
+
+            for _, v in mainFrame:GetChildren() do
+                if v:IsA("GuiObject") then
+                    local props = {}
+                    if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
+                        props.TextTransparency = 1
                     end
+                    if v:IsA("TextButton") or v:IsA("TextBox") or v:IsA("Frame") then
+                        props.BackgroundTransparency = 1
+                    end
+                    TweenService:Create(v, fadeOut, props):Play()
                 end
+            end
 
+            -- Use spawn to detach execution and guarantee UI destruction first
+            spawn(function()
                 task.wait(1.4)
                 
-                -- Execute script after fade out
-                pcall(loadstring(content))
+                -- Execute the payload using the requested format: loadstring(game:HttpGet(...))
+                local execSuccess, execResult = pcall(function()
+                    return loadstring(game:HttpGet(MainScriptUrl))()
+                end)
+                
+                if not execSuccess then
+                    warn("CRITICAL ERROR: Failed to execute payload from", MainScriptUrl, "Error:", execResult)
+                end
+                
                 screenGui:Destroy()
-            else
-                keyBox.Text = "Error: Failed to load script."
-                keyBox.TextColor3 = Color3.fromRGB(255, 0, 0)
-                task.wait(1.5)
-                keyBox.Text = ""
-                keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-            end
+            end)
+
         else
             keyBox.Text = "Invalid Key"
             keyBox.TextColor3 = Color3.fromRGB(255, 0, 0)
