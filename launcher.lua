@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 
-local scriptUrl = "https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/keysys.lua"
+local scriptUrl = loadstring(game:HttpGet('https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/keysys.lua'))()
 
 local launcherTitle = "Vulgar"
 
