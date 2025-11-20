@@ -1,4 +1,4 @@
--- Vulgar UI Library (CS2 Cheat Menu Style)
+-- Vulgar UI Library (CS2 Cheat Menu Style with Launcher)
 -- Made by Grok with love <3
 -- Usage: local Vulgar = loadstring(game:HttpGet("https://raw.githubusercontent.com/.../vulgar.lua"))()
 
@@ -30,7 +30,71 @@ local function CreateInstance(class, props)
     return inst
 end
 
--- Main Container
+-- Launcher Function
+function Vulgar:CreateLauncher(options)
+    options = options or {}
+    local Title = options.Title or "Vulgar Launcher"
+    local OnLaunch = options.OnLaunch or function() end
+
+    local ScreenGui = CreateInstance("ScreenGui", {
+        Name = "VulgarLauncher",
+        ResetOnSpawn = false,
+        Parent = game.CoreGui
+    })
+
+    local LauncherMain = CreateInstance("Frame", {
+        Size = UDim2.new(0, 300, 0, 200),
+        Position = UDim2.new(0.5, -150, 0.5, -100),
+        BackgroundColor3 = Vulgar.Theme.Background,
+        BackgroundTransparency = 0.1,
+        BorderSizePixel = 0,
+        Parent = ScreenGui
+    })
+    CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = LauncherMain})
+    CreateInstance("UIGradient", {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 45)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 20))
+        },
+        Rotation = 90,
+        Parent = LauncherMain
+    })
+
+    local LauncherTitle = CreateInstance("TextLabel", {
+        Size = UDim2.new(1, 0, 0, 50),
+        BackgroundTransparency = 1,
+        Text = Title,
+        TextColor3 = Vulgar.Theme.Text,
+        Font = Enum.Font.GothamBold,
+        TextSize = 18,
+        Parent = LauncherMain
+    })
+
+    local StartButton = CreateInstance("TextButton", {
+        Size = UDim2.new(0, 200, 0, 40),
+        Position = UDim2.new(0.5, -100, 0.5, 20),
+        BackgroundColor3 = Vulgar.Theme.Accent,
+        Text = "Start",
+        TextColor3 = Vulgar.Theme.Text,
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        Parent = LauncherMain
+    })
+    CreateInstance("UICorner", {CornerRadius = UDim.new(0, 6), Parent = StartButton})
+
+    StartButton.MouseButton1Click:Connect(function()
+        TweenService:Create(LauncherMain, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
+        task.wait(0.3)
+        ScreenGui:Destroy()
+        OnLaunch()
+    end)
+
+    -- Fade in animation
+    LauncherMain.BackgroundTransparency = 1
+    TweenService:Create(LauncherMain, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.1}):Play()
+end
+
+-- Main Window
 function Vulgar:Window(options)
     options = options or {}
     local Title = options.Title or "Vulgar"
@@ -41,14 +105,10 @@ function Vulgar:Window(options)
         Parent = game.CoreGui
     })
 
-    local BackgroundBlur = CreateInstance("Frame", {
-        Size = UDim2.new(1,0,1,0),
-        BackgroundTransparency = 1,
-        Parent = ScreenGui
-    })
     local Blur = Instance.new("BlurEffect")
-    Blur.Size = 14
+    Blur.Size = 0
     Blur.Parent = game.Lighting
+    TweenService:Create(Blur, TweenInfo.new(0.5), {Size = 14}):Play()
 
     local Main = CreateInstance("Frame", {
         Name = "Main",
@@ -135,6 +195,24 @@ function Vulgar:Window(options)
         end
     end)
 
+    -- Keybind to toggle UI visibility (RightShift)
+    local visible = true
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if not processed and input.KeyCode == Enum.KeyCode.RightShift then
+            visible = not visible
+            if visible then
+                TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.05}):Play()
+                TweenService:Create(Blur, TweenInfo.new(0.3), {Size = 14}):Play()
+                Main.Visible = true
+            else
+                TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+                TweenService:Create(Blur, TweenInfo.new(0.3), {Size = 0}):Play()
+                task.wait(0.3)
+                Main.Visible = false
+            end
+        end
+    end)
+
     local Tabs = {}
     local CurrentTab = nil
 
@@ -193,13 +271,13 @@ function Vulgar:Window(options)
         local function Select()
             if CurrentTab then
                 CurrentTab.Visible = false
-                CurrentTab.Parent.BackgroundColor3 = Vulgar.Theme.Secondary
                 TweenService:Create(CurrentTab.Parent, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
+                CurrentTab.Parent.BackgroundColor3 = Vulgar.Theme.Secondary
             end
             TabContent.Visible = true
             CurrentTab = TabContent
-            TabButton.BackgroundColor3 = Vulgar.Theme.Accent
             TweenService:Create(TabButton, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.3}):Play()
+            TabButton.BackgroundColor3 = Vulgar.Theme.Accent
             Icon.ImageColor3 = Color3.fromRGB(255,255,255)
             TabName.TextColor3 = Color3.fromRGB(255,255,255)
         end
@@ -414,6 +492,10 @@ function Vulgar:Window(options)
         table.insert(Tabs, TabButton)
         return Tab
     end
+
+    -- Fade in main UI
+    Main.BackgroundTransparency = 1
+    TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.05}):Play()
 
     return Tabs
 end
