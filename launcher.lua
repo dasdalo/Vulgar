@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 
-local scriptUrl = loadstring(game:HttpGet('https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/keysys.lua'))()
+local KEY_SYSTEM_URL = 'https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/keysys.lua'
 
 local launcherTitle = "Vulgar"
 
@@ -48,7 +48,6 @@ local function createLauncherUI()
     loadingText.TextSize = 26
     loadingText.Parent = mainFrame
 
-    -- Loading bar background
     local barBG = Instance.new("Frame")
     barBG.Size = UDim2.new(0, 420, 0, 8)
     barBG.Position = UDim2.new(0.5, -210, 1, -70)
@@ -61,7 +60,6 @@ local function createLauncherUI()
     bgCorner.CornerRadius = UDim.new(1, 0)
     bgCorner.Parent = barBG
 
-    -- Actual loading bar (smooth white fill)
     local bar = Instance.new("Frame")
     bar.Size = UDim2.new(0, 0, 1, 0)
     bar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -73,9 +71,6 @@ local function createLauncherUI()
     barCorner.CornerRadius = UDim.new(1, 0)
     barCorner.Parent = bar
 
-    ----------------------------------------------------------------
-    -- FADE IN (super smooth)
-    ----------------------------------------------------------------
     local fadeIn = TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
     TweenService:Create(mainFrame, fadeIn, {BackgroundTransparency = 0}):Play()
     TweenService:Create(title, fadeIn, {TextTransparency = 0}):Play()
@@ -85,13 +80,9 @@ local function createLauncherUI()
 
     wait(0.8)
 
-    ----------------------------------------------------------------
-    -- SMOOTH LOADING BAR (6 seconds, Quad ease for buttery feel)
-    ----------------------------------------------------------------
     local loadTween = TweenInfo.new(6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(bar, loadTween, {Size = UDim2.new(1, 0, 1, 0)}):Play()
 
-    -- Dots animation
     spawn(function()
         local dots = ""
         while bar.Size.X.Scale < 0.98 do
@@ -99,27 +90,38 @@ local function createLauncherUI()
             loadingText.Text = "Launching" .. dots
             wait(0.6)
         end
-        loadingText.Text = "Launched"
+        loadingText.Text = "Made by char"
     end)
 
-    wait(6)
+    wait(9.5)
+    
+    loadingText.Text = "Finishing Launch..."
+    local loadedContent = nil
+    local shouldProceed = false
 
-    ----------------------------------------------------------------
-    -- Load & execute your script
-    ----------------------------------------------------------------
-    local success, content = pcall(HttpService.GetAsync, HttpService, scriptUrl)
-    if success and content then
-        loadstring(content)()
+    local successUrl, scriptUrl = pcall(function()
+        return loadstring(game:HttpGet(KEY_SYSTEM_URL))()
+    end)
+    
+    local finalUrl = nil
+    if successUrl and type(scriptUrl) == "string" and string.len(scriptUrl) > 4 then
+        finalUrl = scriptUrl
     else
-        loadingText.Text = "Failed to load"
-        wait(2)
+        loadingText.Text = "Vulgar"
+        warn("Key system failed to return valid URL. Error/Result:", scriptUrl)
+    end
+    
+    if finalUrl then
+        loadingText.Text = "Launching script..."
+        
+        local success, content = pcall(HttpService.GetAsync, HttpService, finalUrl)
+        if success and content and string.len(content) > 0 then
+            loadedContent = content
+            loadingText.Text = "Launch complete, fading out..."
+            shouldProceed = true
+        end
     end
 
-    wait(1.5)
-
-    ----------------------------------------------------------------
-    -- FADE OUT (chill 2.2 seconds)
-    ----------------------------------------------------------------
     local fadeOut = TweenInfo.new(2.2, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
     TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
     TweenService:Create(title, fadeOut, {TextTransparency = 1}):Play()
@@ -127,7 +129,15 @@ local function createLauncherUI()
     TweenService:Create(barBG, fadeOut, {BackgroundTransparency = 1}):Play()
     TweenService:Create(bar, fadeOut, {BackgroundTransparency = 1}):Play()
 
-    wait(2.2)
+    wait(1) 
+
+    if shouldProceed and loadedContent then
+        local execSuccess, execResult = pcall(loadstring(loadedContent))
+        if not execSuccess then
+            warn("Script execution failed after UI destroyed:", execResult)
+        end
+    end
+    
     screenGui:Destroy()
 end
 
