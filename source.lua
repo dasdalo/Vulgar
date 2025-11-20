@@ -1,7 +1,3 @@
--- Vulgar UI Library (CS2 Cheat Menu Style with Launcher)
--- Made by Grok with love <3
--- Usage: local Vulgar = loadstring(game:HttpGet("https://raw.githubusercontent.com/.../vulgar.lua"))()
-
 local Vulgar = {
     Theme = {
         Accent = Color3.fromRGB(0, 170, 255),
@@ -30,7 +26,6 @@ local function CreateInstance(class, props)
     return inst
 end
 
--- Launcher Function
 function Vulgar:CreateLauncher(options)
     options = options or {}
     local Title = options.Title or "Vulgar Launcher"
@@ -89,12 +84,10 @@ function Vulgar:CreateLauncher(options)
         OnLaunch()
     end)
 
-    -- Fade in animation
     LauncherMain.BackgroundTransparency = 1
     TweenService:Create(LauncherMain, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.1}):Play()
 end
 
--- Main Window
 function Vulgar:Window(options)
     options = options or {}
     local Title = options.Title or "Vulgar"
@@ -195,7 +188,6 @@ function Vulgar:Window(options)
         end
     end)
 
-    -- Keybind to toggle UI visibility (RightShift)
     local visible = true
     UserInputService.InputBegan:Connect(function(input, processed)
         if not processed and input.KeyCode == Enum.KeyCode.RightShift then
@@ -496,7 +488,6 @@ function Vulgar:Window(options)
         return Tab
     end
 
-    -- Fade in main UI
     Main.BackgroundTransparency = 1
     TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.05}):Play()
 
