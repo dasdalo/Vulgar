@@ -1,17 +1,11 @@
--- Vulgar Key System - Clean Fade Out
--- Key: vulgarkey5
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 
--- CONFIG
 local MainScriptUrl = "https://raw.githubusercontent.com/dasdalo/Vulgar/refs/heads/main/flick.lua"
 local CorrectKey = "vulgarkey5"
 local KeyLink = "https://discord.gg/yourserver"
 local launcherTitle = "Vulgar"
-
-
 
 local function createKeyUI()
     local screenGui = Instance.new("ScreenGui")
@@ -28,7 +22,6 @@ local function createKeyUI()
 
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- Title
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 100)
     title.Position = UDim2.new(0, 0, 0, 20)
@@ -40,7 +33,6 @@ local function createKeyUI()
     title.TextSize = 70
     title.Parent = mainFrame
 
-    -- Enter label
     local keyLabel = Instance.new("TextLabel")
     keyLabel.Size = UDim2.new(0, 400, 0, 50)
     keyLabel.Position = UDim2.new(0.5, -200, 0, 110)
@@ -52,7 +44,6 @@ local function createKeyUI()
     keyLabel.TextSize = 28
     keyLabel.Parent = mainFrame
 
-    -- TextBox
     local keyBox = Instance.new("TextBox")
     keyBox.Size = UDim2.new(0, 420, 0, 60)
     keyBox.Position = UDim2.new(0.5, -210, 0, 160)
@@ -69,7 +60,6 @@ local function createKeyUI()
 
     Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0,12)
 
-    -- Buttons
     local getKeyBtn = Instance.new("TextButton")
     getKeyBtn.Size = UDim2.new(0,200,0,55)
     getKeyBtn.Position = UDim2.new(0.5,-210,1,-80)
@@ -99,7 +89,6 @@ local function createKeyUI()
     Instance.new("UICorner", submitBtn).CornerRadius = UDim.new(0,12)
 
 
-    -- Fade In
     local fadeIn = TweenInfo.new(1.3, Enum.EasingStyle.Sine)
 
     TweenService:Create(mainFrame, fadeIn, {BackgroundTransparency = 0}):Play()
@@ -110,50 +99,59 @@ local function createKeyUI()
     TweenService:Create(submitBtn, fadeIn, {BackgroundTransparency = 0, TextTransparency = 0}):Play()
 
 
-    -- CLICK: Get Key
     getKeyBtn.MouseButton1Click:Connect(function()
         setclipboard(KeyLink)
     end)
 
-
-    -- CLICK: Submit Key
-    submitBtn.MouseButton1Click:Connect(function()
+    local function runKeyCheck()
         local input = keyBox.Text:gsub("%s+",""):lower()
-
         if input == CorrectKey:lower() then
-
-            -- Load external script
+            keyBox.Text = "Key Accepted! Loading..."
+            keyBox.TextColor3 = Color3.fromRGB(0, 255, 0)
+            
             local ok, content = pcall(HttpService.GetAsync, HttpService, MainScriptUrl)
-            if ok then loadstring(content)() end
+            
+            if ok and content then
+                -- Begin Fade Out
+                local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
-            -- **FADE OUT UI — clean & smooth**
-            local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+                TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
 
-            TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
-
-            for _, v in mainFrame:GetChildren() do
-                if v:IsA("GuiObject") then
-                    local props = {}
-
-                    if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
-                        props.TextTransparency = 1
+                for _, v in mainFrame:GetChildren() do
+                    if v:IsA("GuiObject") then
+                        local props = {}
+                        if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
+                            props.TextTransparency = 1
+                        end
+                        if v:IsA("TextButton") or v:IsA("TextBox") or v:IsA("Frame") then
+                            props.BackgroundTransparency = 1
+                        end
+                        TweenService:Create(v, fadeOut, props):Play()
                     end
-
-                    if v:IsA("TextButton") or v:IsA("TextBox") or v:IsA("Frame") then
-                        props.BackgroundTransparency = 1
-                    end
-
-                    TweenService:Create(v, fadeOut, props):Play()
                 end
+
+                task.wait(1.4)
+                
+                -- Execute script after fade out
+                pcall(loadstring(content))
+                screenGui:Destroy()
+            else
+                keyBox.Text = "Error: Failed to load script."
+                keyBox.TextColor3 = Color3.fromRGB(255, 0, 0)
+                task.wait(1.5)
+                keyBox.Text = ""
+                keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
-
-            task.wait(1.4)
-            screenGui:Destroy()
-
         else
+            keyBox.Text = "Invalid Key"
+            keyBox.TextColor3 = Color3.fromRGB(255, 0, 0)
+            task.wait(1.5)
             keyBox.Text = ""
+            keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
         end
-    end)
+    end
+
+    submitBtn.MouseButton1Click:Connect(runKeyCheck)
 end
 
 createKeyUI()
