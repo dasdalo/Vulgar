@@ -17,7 +17,7 @@ local function createKeyUI()
     mainFrame.Size = UDim2.new(0, 500, 0, 360)
     mainFrame.Position = UDim2.new(0.5, -250, 0.5, -180)
     mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    mainFrame.BackgroundTransparency = 0 -- INSTANT APPEAR
+    mainFrame.BackgroundTransparency = 0 
     mainFrame.Parent = screenGui
 
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 16)
@@ -28,7 +28,7 @@ local function createKeyUI()
     title.BackgroundTransparency = 1
     title.Text = launcherTitle
     title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.TextTransparency = 0 -- INSTANT APPEAR
+    title.TextTransparency = 0 
     title.Font = Enum.Font.ArialBold
     title.TextSize = 70
     title.Parent = mainFrame
@@ -39,7 +39,7 @@ local function createKeyUI()
     keyLabel.BackgroundTransparency = 1
     keyLabel.Text = "Enter Key"
     keyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    keyLabel.TextTransparency = 0 -- INSTANT APPEAR
+    keyLabel.TextTransparency = 0 
     keyLabel.Font = Enum.Font.Gotham
     keyLabel.TextSize = 28
     keyLabel.Parent = mainFrame
@@ -48,12 +48,12 @@ local function createKeyUI()
     keyBox.Size = UDim2.new(0, 420, 0, 60)
     keyBox.Position = UDim2.new(0.5, -210, 0, 160)
     keyBox.BackgroundColor3 = Color3.fromRGB(30,30,30)
-    keyBox.BackgroundTransparency = 0.7 -- INSTANT APPEAR
+    keyBox.BackgroundTransparency = 0.7 
     keyBox.PlaceholderText = "Enter key here..."
     keyBox.Text = ""
     keyBox.TextColor3 = Color3.fromRGB(255,255,255)
     keyBox.PlaceholderColor3 = Color3.fromRGB(150,150,150)
-    keyBox.TextTransparency = 0 -- INSTANT APPEAR
+    keyBox.TextTransparency = 0
     keyBox.Font = Enum.Font.Gotham
     keyBox.TextSize = 24
     keyBox.Parent = mainFrame
@@ -64,7 +64,7 @@ local function createKeyUI()
     getKeyBtn.Size = UDim2.new(0,200,0,55)
     getKeyBtn.Position = UDim2.new(0.5,-210,1,-80)
     getKeyBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-    getKeyBtn.BackgroundTransparency = 0 -- INSTANT APPEAR
+    getKeyBtn.BackgroundTransparency = 0 
     getKeyBtn.Text = "Get Key"
     getKeyBtn.TextColor3 = Color3.fromRGB(255,255,255)
     getKeyBtn.TextTransparency = 0 -- INSTANT APPEAR
@@ -81,16 +81,13 @@ local function createKeyUI()
     submitBtn.BackgroundTransparency = 0 -- INSTANT APPEAR
     submitBtn.Text = "Submit Key"
     submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    submitBtn.TextTransparency = 0 -- INSTANT APPEAR
+    submitBtn.TextTransparency = 0
     submitBtn.Font = Enum.Font.GothamBold
     submitBtn.TextSize = 26
     submitBtn.Parent = mainFrame
 
     Instance.new("UICorner", submitBtn).CornerRadius = UDim.new(0,12)
 
-    ---------------------------------------------------------
-    -- NO FADE-IN CODE HERE ANYMORE
-    ---------------------------------------------------------
 
     getKeyBtn.MouseButton1Click:Connect(function()
         setclipboard(KeyLink)
