@@ -65,9 +65,6 @@ local function createLauncherUI()
 
     Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
-    --------------------------------------------------------------------
-    -- FADE IN ONLY
-    --------------------------------------------------------------------
     local fadeIn = TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
     TweenService:Create(mainFrame, fadeIn, {BackgroundTransparency = 0}):Play()
     TweenService:Create(title, fadeIn, {TextTransparency = 0}):Play()
@@ -77,9 +74,6 @@ local function createLauncherUI()
 
     wait(0.8)
 
-    --------------------------------------------------------------------
-    -- BAR LOAD + TEXT DOTS
-    --------------------------------------------------------------------
     local loadTween = TweenInfo.new(6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(bar, loadTween, {Size = UDim2.new(1, 0, 1, 0)}):Play()
 
@@ -126,9 +120,6 @@ local function createLauncherUI()
         end
     end
 
-    --------------------------------------------------------------------
-    -- INSTANT FADE OUT (NO TWEEN)
-    --------------------------------------------------------------------
     mainFrame.BackgroundTransparency = 1
     title.TextTransparency = 1
     loadingText.TextTransparency = 1
