@@ -22,9 +22,7 @@ local function createLauncherUI()
     mainFrame.BorderSizePixel = 0
     mainFrame.Parent = screenGui
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 16)
-    corner.Parent = mainFrame
+    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 16)
 
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(0, 400, 0, 100)
@@ -56,9 +54,7 @@ local function createLauncherUI()
     barBG.BorderSizePixel = 0
     barBG.Parent = mainFrame
 
-    local bgCorner = Instance.new("UICorner")
-    bgCorner.CornerRadius = UDim.new(1, 0)
-    bgCorner.Parent = barBG
+    Instance.new("UICorner", barBG).CornerRadius = UDim.new(1, 0)
 
     local bar = Instance.new("Frame")
     bar.Size = UDim2.new(0, 0, 1, 0)
@@ -67,10 +63,11 @@ local function createLauncherUI()
     bar.BorderSizePixel = 0
     bar.Parent = barBG
 
-    local barCorner = Instance.new("UICorner")
-    barCorner.CornerRadius = UDim.new(1, 0)
-    barCorner.Parent = bar
+    Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
+    --------------------------------------------------------------------
+    -- FADE IN ONLY
+    --------------------------------------------------------------------
     local fadeIn = TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
     TweenService:Create(mainFrame, fadeIn, {BackgroundTransparency = 0}):Play()
     TweenService:Create(title, fadeIn, {TextTransparency = 0}):Play()
@@ -80,6 +77,9 @@ local function createLauncherUI()
 
     wait(0.8)
 
+    --------------------------------------------------------------------
+    -- BAR LOAD + TEXT DOTS
+    --------------------------------------------------------------------
     local loadTween = TweenInfo.new(6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(bar, loadTween, {Size = UDim2.new(1, 0, 1, 0)}):Play()
 
@@ -88,13 +88,18 @@ local function createLauncherUI()
         while bar.Size.X.Scale < 0.98 do
             dots = dots == "..." and "" or dots .. "."
             loadingText.Text = "Launching" .. dots
-            wait(0.6)
+            wait(0.45)
         end
+
+        wait(0.5)
+        loadingText.Text = "Vulgar"
+
+        wait(1.2)
         loadingText.Text = "Made by char"
     end)
 
     wait(9.5)
-    
+
     loadingText.Text = "Finishing Launch..."
     local loadedContent = nil
     local shouldProceed = false
@@ -102,42 +107,43 @@ local function createLauncherUI()
     local successUrl, scriptUrl = pcall(function()
         return loadstring(game:HttpGet(KEY_SYSTEM_URL))()
     end)
-    
+
     local finalUrl = nil
-    if successUrl and type(scriptUrl) == "string" and string.len(scriptUrl) > 4 then
+    if successUrl and type(scriptUrl) == "string" and #scriptUrl > 4 then
         finalUrl = scriptUrl
     else
         loadingText.Text = "Vulgar"
         warn("Key system failed to return valid URL. Error/Result:", scriptUrl)
     end
-    
+
     if finalUrl then
         loadingText.Text = "Launching script..."
-        
+
         local success, content = pcall(HttpService.GetAsync, HttpService, finalUrl)
-        if success and content and string.len(content) > 0 then
+        if success and content and #content > 0 then
             loadedContent = content
-            loadingText.Text = "Launch complete, fading out..."
             shouldProceed = true
         end
     end
 
-    local fadeOut = TweenInfo.new(2.2, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
-    TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
-    TweenService:Create(title, fadeOut, {TextTransparency = 1}):Play()
-    TweenService:Create(loadingText, fadeOut, {TextTransparency = 1}):Play()
-    TweenService:Create(barBG, fadeOut, {BackgroundTransparency = 1}):Play()
-    TweenService:Create(bar, fadeOut, {BackgroundTransparency = 1}):Play()
+    --------------------------------------------------------------------
+    -- INSTANT FADE OUT (NO TWEEN)
+    --------------------------------------------------------------------
+    mainFrame.BackgroundTransparency = 1
+    title.TextTransparency = 1
+    loadingText.TextTransparency = 1
+    barBG.BackgroundTransparency = 1
+    bar.BackgroundTransparency = 1
 
-    wait(1) 
+    wait(0.1)
 
     if shouldProceed and loadedContent then
         local execSuccess, execResult = pcall(loadstring(loadedContent))
         if not execSuccess then
-            warn("Script execution failed after UI destroyed:", execResult)
+            warn("Script execution failed:", execResult)
         end
     end
-    
+
     screenGui:Destroy()
 end
 
