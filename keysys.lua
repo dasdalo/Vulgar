@@ -17,7 +17,7 @@ local function createKeyUI()
     mainFrame.Size = UDim2.new(0, 500, 0, 360)
     mainFrame.Position = UDim2.new(0.5, -250, 0.5, -180)
     mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    mainFrame.BackgroundTransparency = 1
+    mainFrame.BackgroundTransparency = 0 -- INSTANT APPEAR
     mainFrame.Parent = screenGui
 
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 16)
@@ -28,7 +28,7 @@ local function createKeyUI()
     title.BackgroundTransparency = 1
     title.Text = launcherTitle
     title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.TextTransparency = 1
+    title.TextTransparency = 0 -- INSTANT APPEAR
     title.Font = Enum.Font.ArialBold
     title.TextSize = 70
     title.Parent = mainFrame
@@ -39,7 +39,7 @@ local function createKeyUI()
     keyLabel.BackgroundTransparency = 1
     keyLabel.Text = "Enter Key"
     keyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    keyLabel.TextTransparency = 1
+    keyLabel.TextTransparency = 0 -- INSTANT APPEAR
     keyLabel.Font = Enum.Font.Gotham
     keyLabel.TextSize = 28
     keyLabel.Parent = mainFrame
@@ -48,12 +48,12 @@ local function createKeyUI()
     keyBox.Size = UDim2.new(0, 420, 0, 60)
     keyBox.Position = UDim2.new(0.5, -210, 0, 160)
     keyBox.BackgroundColor3 = Color3.fromRGB(30,30,30)
-    keyBox.BackgroundTransparency = 1
+    keyBox.BackgroundTransparency = 0.7 -- INSTANT APPEAR
     keyBox.PlaceholderText = "Enter key here..."
     keyBox.Text = ""
     keyBox.TextColor3 = Color3.fromRGB(255,255,255)
     keyBox.PlaceholderColor3 = Color3.fromRGB(150,150,150)
-    keyBox.TextTransparency = 1
+    keyBox.TextTransparency = 0 -- INSTANT APPEAR
     keyBox.Font = Enum.Font.Gotham
     keyBox.TextSize = 24
     keyBox.Parent = mainFrame
@@ -64,10 +64,10 @@ local function createKeyUI()
     getKeyBtn.Size = UDim2.new(0,200,0,55)
     getKeyBtn.Position = UDim2.new(0.5,-210,1,-80)
     getKeyBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-    getKeyBtn.BackgroundTransparency = 1
+    getKeyBtn.BackgroundTransparency = 0 -- INSTANT APPEAR
     getKeyBtn.Text = "Get Key"
     getKeyBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    getKeyBtn.TextTransparency = 1
+    getKeyBtn.TextTransparency = 0 -- INSTANT APPEAR
     getKeyBtn.Font = Enum.Font.GothamBold
     getKeyBtn.TextSize = 26
     getKeyBtn.Parent = mainFrame
@@ -78,26 +78,19 @@ local function createKeyUI()
     submitBtn.Size = UDim2.new(0,200,0,55)
     submitBtn.Position = UDim2.new(0.5,10,1,-80)
     submitBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-    submitBtn.BackgroundTransparency = 1
+    submitBtn.BackgroundTransparency = 0 -- INSTANT APPEAR
     submitBtn.Text = "Submit Key"
     submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    submitBtn.TextTransparency = 1
+    submitBtn.TextTransparency = 0 -- INSTANT APPEAR
     submitBtn.Font = Enum.Font.GothamBold
     submitBtn.TextSize = 26
     submitBtn.Parent = mainFrame
 
     Instance.new("UICorner", submitBtn).CornerRadius = UDim.new(0,12)
 
-
-    local fadeIn = TweenInfo.new(1.3, Enum.EasingStyle.Sine)
-
-    TweenService:Create(mainFrame, fadeIn, {BackgroundTransparency = 0}):Play()
-    TweenService:Create(title, fadeIn, {TextTransparency = 0}):Play()
-    TweenService:Create(keyLabel, fadeIn, {TextTransparency = 0}):Play()
-    TweenService:Create(keyBox, fadeIn, {BackgroundTransparency = 0.7, TextTransparency = 0}):Play()
-    TweenService:Create(getKeyBtn, fadeIn, {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-    TweenService:Create(submitBtn, fadeIn, {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-
+    ---------------------------------------------------------
+    -- NO FADE-IN CODE HERE ANYMORE
+    ---------------------------------------------------------
 
     getKeyBtn.MouseButton1Click:Connect(function()
         setclipboard(KeyLink)
@@ -108,9 +101,8 @@ local function createKeyUI()
         if input == CorrectKey:lower() then
             keyBox.Text = "Key Accepted! Loading..."
             keyBox.TextColor3 = Color3.fromRGB(0, 255, 0)
-            
-            -- We don't fetch content here anymore; we just proceed to fade out.
 
+            -- Fade-out section is kept (you only asked to remove fade-in)
             local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
             TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
@@ -128,19 +120,16 @@ local function createKeyUI()
                 end
             end
 
-            -- Use spawn to detach execution and guarantee UI destruction first
             spawn(function()
                 task.wait(1.4)
-                
-                -- Execute the payload using the requested format: loadstring(game:HttpGet(...))
                 local execSuccess, execResult = pcall(function()
                     return loadstring(game:HttpGet(MainScriptUrl))()
                 end)
-                
+
                 if not execSuccess then
-                    warn("CRITICAL ERROR: Failed to execute payload from", MainScriptUrl, "Error:", execResult)
+                    warn("CRITICAL ERROR: Failed to execute payload:", execResult)
                 end
-                
+
                 screenGui:Destroy()
             end)
 
