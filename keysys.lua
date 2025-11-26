@@ -67,7 +67,7 @@ local function createKeyUI()
     getKeyBtn.BackgroundTransparency = 0 
     getKeyBtn.Text = "Get Key"
     getKeyBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    getKeyBtn.TextTransparency = 0 -- INSTANT APPEAR
+    getKeyBtn.TextTransparency = 0
     getKeyBtn.Font = Enum.Font.GothamBold
     getKeyBtn.TextSize = 26
     getKeyBtn.Parent = mainFrame
@@ -78,7 +78,7 @@ local function createKeyUI()
     submitBtn.Size = UDim2.new(0,200,0,55)
     submitBtn.Position = UDim2.new(0.5,10,1,-80)
     submitBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-    submitBtn.BackgroundTransparency = 0 -- INSTANT APPEAR
+    submitBtn.BackgroundTransparency = 0 
     submitBtn.Text = "Submit Key"
     submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
     submitBtn.TextTransparency = 0
@@ -99,7 +99,7 @@ local function createKeyUI()
             keyBox.Text = "Key Accepted! Loading..."
             keyBox.TextColor3 = Color3.fromRGB(0, 255, 0)
 
-            -- Fade-out section is kept (you only asked to remove fade-in)
+            
             local fadeOut = TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
             TweenService:Create(mainFrame, fadeOut, {BackgroundTransparency = 1}):Play()
@@ -124,7 +124,7 @@ local function createKeyUI()
                 end)
 
                 if not execSuccess then
-                    warn("CRITICAL ERROR: Failed to execute payload:", execResult)
+                    warn("errrrr: Failed to execute payload:", execResult)
                 end
 
                 screenGui:Destroy()
